@@ -65,7 +65,7 @@ defmodule Pie.StateTest do
       assert updated_state.update_count == 1
     end
 
-    test "tracks state changes with labels when :track_updates? options is set to true" do
+    test "tracks state updates with labels when :track_updates? options is set to true" do
       state = %State{
         valid?: true,
         initial_value: 10,
@@ -76,10 +76,10 @@ defmodule Pie.StateTest do
 
       updated_state = @sut.update(state, 11, label: "simple state change")
 
-      assert updated_state.changes == [{"simple state change", 10, 11}]
+      assert updated_state.updates == [{"simple state change", 10, 11}]
     end
 
-    test "tracks state changes without labels when :track_updates? options is set to true" do
+    test "tracks state updates without labels when :track_updates? options is set to true" do
       state = %State{
         valid?: true,
         initial_value: 10,
@@ -90,7 +90,7 @@ defmodule Pie.StateTest do
 
       updated_state = @sut.update(state, 11)
 
-      assert updated_state.changes == [{10, 11}]
+      assert updated_state.updates == [{10, 11}]
     end
   end
 

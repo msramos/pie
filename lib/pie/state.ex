@@ -8,7 +8,7 @@ defmodule Pie.State do
   defstruct valid?: true,
             track_updates?: false,
             update_count: 0,
-            changes: [],
+            updates: [],
             initial_value: nil,
             current_value: nil,
             error: nil
@@ -34,7 +34,7 @@ defmodule Pie.State do
       current_value: data,
       initial_value: data,
       track_updates?: opts[:track_updates] || false,
-      changes: [],
+      updates: [],
       update_count: 0
     }
   end
@@ -51,12 +51,12 @@ defmodule Pie.State do
 
   def update(state = %__MODULE__{valid?: true, track_updates?: true}, value, opts)
       when is_list(opts) do
-    changes = get_changes(state, value, opts)
+    updates = get_updates(state, value, opts)
 
     %__MODULE__{
       state
       | current_value: value,
-        changes: changes,
+        updates: updates,
         update_count: state.update_count + 1
     }
   end
@@ -65,13 +65,13 @@ defmodule Pie.State do
     state
   end
 
-  defp get_changes(%__MODULE__{current_value: current_value, changes: changes}, new_value, opts) do
+  defp get_updates(%__MODULE__{current_value: current_value, updates: updates}, new_value, opts) do
     case opts[:label] do
       label when not is_nil(label) ->
-        [{label, current_value, new_value} | changes]
+        [{label, current_value, new_value} | updates]
 
       _no_label ->
-        [{current_value, new_value} | changes]
+        [{current_value, new_value} | updates]
     end
   end
 
