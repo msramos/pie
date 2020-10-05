@@ -2,6 +2,7 @@ defmodule Pie.StateTest do
   use ExUnit.Case, async: true
 
   alias Pie.State
+  alias Pie.State.Update
 
   @sut State
 
@@ -76,7 +77,9 @@ defmodule Pie.StateTest do
 
       updated_state = @sut.update(state, 11, label: "simple state change")
 
-      assert updated_state.updates == [{"simple state change", 10, 11}]
+      assert updated_state.updates == [
+               %Update{label: "simple state change", previous_value: 10, new_value: 11}
+             ]
     end
 
     test "tracks state updates without labels when :track_updates? options is set to true" do
@@ -90,7 +93,7 @@ defmodule Pie.StateTest do
 
       updated_state = @sut.update(state, 11)
 
-      assert updated_state.updates == [{10, 11}]
+      assert updated_state.updates == [%Update{previous_value: 10, new_value: 11}]
     end
   end
 

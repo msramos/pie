@@ -13,12 +13,15 @@ defmodule Pie.State do
             current_value: nil,
             error: nil
 
+  alias Pie.State.Update
+
   @typedoc """
   A struct to hold the state of the pipeline.
   """
   @type t :: %__MODULE__{
           valid?: true | false,
           update_count: non_neg_integer(),
+          updates: [Update.t()],
           track_updates?: true | false,
           current_value: any(),
           initial_value: any(),
@@ -65,14 +68,15 @@ defmodule Pie.State do
     state
   end
 
-  defp get_updates(%__MODULE__{current_value: current_value, updates: updates}, new_value, opts) do
-    case opts[:label] do
-      label when not is_nil(label) ->
-        [{label, current_value, new_value} | updates]
+  defp get_updates(state = %__MODULE__{}, new_value, opts) do
+    update = %Update{
+      previous_value: state.current_value,
+      new_value: new_value,
+      index: state.update_count,
+      label: opts[:label]
+    }
 
-      _no_label ->
-        [{current_value, new_value} | updates]
-    end
+    [update | state.updates]
   end
 
   @doc """

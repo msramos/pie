@@ -3,6 +3,7 @@ defmodule PieTest do
   doctest Pie
 
   alias Pie.State
+  alias Pie.State.Update
 
   @sut Pie
 
@@ -51,8 +52,8 @@ defmodule PieTest do
               %State{
                 error: "division by zero",
                 updates: [
-                  {25, 27},
-                  {"adding 15", 10, 25}
+                  %Update{previous_value: 25, new_value: 27, index: 1},
+                  %Update{label: "adding 15", previous_value: 10, new_value: 25, index: 0}
                 ],
                 current_value: 27,
                 initial_value: 10,
