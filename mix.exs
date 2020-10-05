@@ -7,7 +7,9 @@ defmodule Pie.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      name: "Pie",
+      source_url: "https://github.com/msramos/pie"
     ]
   end
 
@@ -18,6 +20,8 @@ defmodule Pie.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:ex_doc, "~> 0.22.6", only: :dev, runtime: :false}
+    ]
   end
 end
