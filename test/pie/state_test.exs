@@ -110,11 +110,11 @@ defmodule Pie.StateTest do
     end
   end
 
-  describe "result/1" do
+  describe "eval/1" do
     test "returns an {:ok, value} tuple when the state is valid" do
       state = %State{valid?: true, initial_value: 10, current_value: 42}
 
-      result = @sut.result(state)
+      result = @sut.eval(state)
 
       assert result == {:ok, 42}
     end
@@ -127,7 +127,7 @@ defmodule Pie.StateTest do
         error: "this is not valid"
       }
 
-      result = @sut.result(state)
+      result = @sut.eval(state)
 
       assert result == {:error, state}
     end

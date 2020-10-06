@@ -28,6 +28,8 @@ defmodule Pie.State do
           error: any()
         }
 
+  @type result :: {:ok, any()} | {:error, t()}
+
   @doc """
   Creates a new valid state from the given data.
   """
@@ -90,14 +92,14 @@ defmodule Pie.State do
   @doc """
   Returns an ok or error tuple depending on the value of the given state.
   """
-  @spec result(t()) :: {:ok, any()} | {:error, t()}
-  def result(state)
+  @spec eval(t()) :: result()
+  def eval(state)
 
-  def result(%__MODULE__{valid?: true, current_value: value}) do
+  def eval(%__MODULE__{valid?: true, current_value: value}) do
     {:ok, value}
   end
 
-  def result(state = %__MODULE__{}) do
+  def eval(state = %__MODULE__{}) do
     {:error, state}
   end
 end
