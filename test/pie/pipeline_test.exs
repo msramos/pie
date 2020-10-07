@@ -147,5 +147,64 @@ defmodule Pie.PipelineTest do
 
       assert result == {:error, expected}
     end
+
+    test "capture exceptions with the option capture_errors: true" do
+      # this step will multiply the value of the state by 2
+      step1_fun = fn s = %{current_value: v}, c -> State.update(s, v * c) end
+      step1 = Step.new(step1_fun, 2, label: "working step")
+
+      # this step will divide the value of the state by 0, causing an error
+      step2_fun = fn s = %{current_value: v}, c -> State.update(s, v / c) end
+      step2 = Step.new(step2_fun, 0, label: "failing step")
+
+      queue = :queue.new()
+      queue = :queue.in(step1, queue)
+      queue = :queue.in(step2, queue)
+
+      pipeline = %Pipeline{
+        track_steps?: true,
+        capture_errors?: true,
+        step_queue: queue,
+        state: State.new(10)
+      }
+
+      expected = %Pipeline{
+        pipeline
+        | executed?: true,
+          step_queue: :queue.new(),
+          executed_steps: [
+            %Step{
+              executed?: true,
+              failed?: true,
+              error: %ArithmeticError{message: "bad argument in arithmetic expression"},
+              callback: step2_fun,
+              input: 20,
+              context: 0,
+              output: nil,
+              label: "failing step"
+            },
+            %Step{
+              executed?: true,
+              failed?: false,
+              callback: step1_fun,
+              context: 2,
+              input: 10,
+              output: 20,
+              label: "working step"
+            }
+          ],
+          state: %State{
+            valid?: false,
+            current_value: 20,
+            initial_value: 10,
+            error: :error,
+            update_count: 1
+          }
+      }
+
+      result = @sut.run(pipeline)
+
+      assert result == {:error, expected}
+    end
   end
 end

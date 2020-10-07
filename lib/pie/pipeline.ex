@@ -10,7 +10,8 @@ defmodule Pie.Pipeline do
             executed_steps: [],
             state: nil,
             executed?: false,
-            track_steps?: false
+            track_steps?: false,
+            capture_errors?: false
 
   alias Pie.State
   alias Pie.Pipeline.Step
@@ -39,7 +40,8 @@ defmodule Pie.Pipeline do
     %__MODULE__{
       state: State.new(input, options),
       step_queue: :queue.new(),
-      track_steps?: options[:track_steps] == true
+      track_steps?: options[:track_steps] == true,
+      capture_errors?: options[:capture_errors] == true
     }
   end
 
@@ -76,7 +78,8 @@ defmodule Pie.Pipeline do
   defp execute_steps(pipeline) do
     case :queue.out(pipeline.step_queue) do
       {{:value, step}, queue} ->
-        {updated_step, updated_state} = Step.execute(step, pipeline.state)
+        {updated_step, updated_state} =
+          Step.execute(step, pipeline.state, pipeline.capture_errors?)
 
         steps = if pipeline.track_steps?, do: [updated_step | pipeline.executed_steps], else: []
 

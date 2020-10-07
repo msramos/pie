@@ -69,8 +69,8 @@ defmodule PieTest do
     test "executes a pipeline in order" do
       result =
         @sut.new_pipeline([10])
-        |> @sut.pipeline_step(&step_append/2, 11)
-        |> @sut.pipeline_step(&step_append/2, 12)
+        |> @sut.add_step(&step_append/2, 11)
+        |> @sut.add_step(&step_append/2, 12)
         |> @sut.run_pipeline()
 
       assert result == {:ok, [12, 11, 10]}
